@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Arcade | Velyne The Space Fighter</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- RESET & VARIABEL --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-color: #1a1a24;
+            --card-bg: #28283a;
+            --text-main: #e2e8f0;
+            --accent-cyan: #00f3ff;
+            --accent-pink: #ff007f;
+            --accent-yellow: #ffde00;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .pixel-font { font-family: 'Press Start 2P', cursive; line-height: 1.4; }
+
+        /* --- CRT EFFECT --- */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+            z-index: 999;
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* --- NAVBAR --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #111119;
+            border-bottom: 4px solid var(--accent-pink);
+        }
+        .logo { color: var(--accent-cyan); font-size: 1.2rem; text-shadow: 2px 2px 0px var(--accent-pink); cursor: pointer; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav a { color: var(--text-main); text-decoration: none; font-size: 1.5rem; transition: color 0.2s; }
+        nav a:hover { color: var(--accent-yellow); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .hero h1 { font-size: 3rem; color: var(--accent-yellow); text-shadow: 4px 4px 0px #000, 6px 6px 0px var(--accent-pink); margin-bottom: 20px; }
+        .hero p { font-size: 1.8rem; max-width: 600px; margin-bottom: 40px; }
+
+        .btn-start {
+            background-color: transparent; color: var(--accent-cyan); border: 4px solid var(--accent-cyan);
+            padding: 15px 30px; font-family: 'Press Start 2P', cursive; font-size: 1rem; cursor: pointer;
+            box-shadow: 4px 4px 0px var(--accent-pink); transition: all 0.1s; animation: blink 1.5s infinite;
+        }
+        .btn-start:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--accent-pink); }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+
+        /* --- FEATURED GAME SECTION (VELYNE) --- */
+        .content-section { padding: 60px 40px; max-width: 1000px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 40px; color: var(--accent-cyan); text-shadow: 2px 2px #000; }
+
+        .featured-game {
+            display: flex;
+            background-color: var(--card-bg);
+            border: 4px solid var(--accent-yellow);
+            padding: 20px;
+            gap: 30px;
+            box-shadow: 8px 8px 0px rgba(255, 222, 0, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .featured-game:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 8px 12px 0px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Area Thumbnail */
+        .game-thumbnail {
+            flex: 1;
+            border: 4px solid #111;
+            display: block; 
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+        
+        .game-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .game-thumbnail:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Overlay teks "CLICK TO PLAY" saat kursor di atas thumbnail */
+        .game-thumbnail::after {
+            content: "CLICK TO PLAY";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(255, 0, 127, 0.8);
+            padding: 10px 15px;
+            border: 2px solid #fff;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .game-thumbnail:hover::after { opacity: 1; }
+
+        /* Area Deskripsi */
+        .game-info {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .game-info h3 { font-size: 1.5rem; color: var(--accent-pink); margin-bottom: 15px; }
+        .game-info .genre { font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 15px; display: inline-block; }
+        .game-info p { font-size: 1.3rem; margin-bottom: 25px; text-align: justify; }
+
+        .btn-play-now {
+            background-color: var(--accent-pink);
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            border: 4px solid #111;
+            padding: 12px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            display: inline-block;
+            transition: 0.2s;
+            width: fit-content;
+        }
+
+        .btn-play-now:hover { background-color: var(--accent-cyan); color: #000; }
+
+        /* --- FOOTER --- */
+        footer { text-align: center; padding: 30px; background-color: #111119; border-top: 4px solid var(--accent-cyan); margin-top: 40px; }
+        footer p { color: #888; font-size: 1.2rem; }
+
+        /* Responsif HP */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            header { flex-direction: column; gap: 15px; }
+            .featured-game { flex-direction: column; gap: 15px; }
+            .game-thumbnail { min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="crt"></div>
+
+    <header>
+        <div class="logo pixel-font">ARCADE.DEV</div>
+        <nav>
+            <ul>
+                <li><a href="#">Beranda</a></li>
+                <li><a href="#play">Main Game</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Title Screen -->
+        <section class="hero">
+            <h1>ARCADE <br> TERBUKA</h1>
+            <p>Mainkan langsung dari browsermu. Tidak perlu koin.</p>
+            <button class="btn-start" onclick="document.getElementById('play').scrollIntoView({ behavior: 'smooth' });">LIHAT GAME</button>
+        </section>
+
+        <!-- Featured Game Section -->
+        <section class="content-section" id="play">
+            <h2 class="section-title">SEKARANG TAYANG</h2>
+            
+            <div class="featured-game">
+                
+                <!-- LINK MENUJU GAME VIA THUMBNAIL -->
+                <a href="https://johnthor33.github.io/VelyneTheSpaceFighter/" target="_blank" class="game-thumbnail">
+                    <!-- LINK MENUJU GAMBAR THUMBNAIL -->
+                    <img src="https://johnthor33.github.io/VelinTest/GHJ.jpg" alt="Velyne The Space Fighter Thumbnail">
+                </a>
+
+                <div class="game-info">
+                    <h3>VELYNE THE SPACE FIGHTER</h3>
+                    <span class="genre">[ SPACE SHOOTER / ACTION ]</span>
+                    
+                    <p>
+                        Masuki kokpit pesawat tempur antariksa dan bantu Velyne menghadapi gelombang musuh dari galaksi tak dikenal! 
+                        Game browser bergaya retro arcade ini menguji refleksmu dalam menghindari peluru dan menghancurkan bos tangguh. 
+                        Kumpulkan power-up, upgrade meriam lasermu, dan raih skor tertinggi di papan peringkat alam semesta.
+                    </p>
+
+                    <!-- LINK MENUJU GAME VIA TOMBOL PLAY -->
+                    <a href="https://johnthor33.github.io/VelyneTheSpaceFighter/" target="_blank" class="btn-play-now">
+                        PLAY ON BROWSER
+                    </a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p class="pixel-font">READY PLAYER 1</p>
+        <p>&copy; 2026 Indie Game Developer.</p>
+    </footer>
+</body>
+</html>
